@@ -70,6 +70,7 @@ int             0|([1-9][0-9]*)
 "&"      return yy::tiger_parser::make_AND(loc);
 "|"      return yy::tiger_parser::make_OR(loc);
 ":="     return yy::tiger_parser::make_ASSIGN(loc);
+"or"     return yy::tiger_parser::make_OR(loc);
 
  /* Keywords */
 
