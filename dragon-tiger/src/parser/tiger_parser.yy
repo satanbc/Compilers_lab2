@@ -83,6 +83,9 @@ using utils::nl;
 %token <Symbol> STRING "string"
 %token <int> INT "integer"
 
+%nonassoc LOWER_THAN_ELSE
+%nonassoc ELSE
+
 // Declare the nonterminals types
 
 // %type <Var *> var;
@@ -91,7 +94,7 @@ using utils::nl;
 %type <Decl *> decl funcDecl varDecl;
 %type <std::vector<Decl *>> decls;
 %type <Expr *> expr stringExpr seqExpr intExpr callExpr opExpr negExpr
-            assignExpr whileExpr forExpr breakExpr letExpr var;
+            assignExpr whileExpr forExpr breakExpr letExpr var ifExpr;
 
 %type <std::vector<Expr *>> exprs nonemptyexprs;
 %type <std::vector<Expr *>> arguments nonemptyarguments;
@@ -135,6 +138,19 @@ expr: stringExpr { $$ = $1; }
    | forExpr { $$ = $1; }
    | breakExpr { $$ = $1; }
    | letExpr { $$ = $1; }
+   | ifExpr { $$ = $1; }
+;
+
+ifExpr:
+    IF expr THEN expr ELSE expr
+      {
+        $$ = new IfThenElse(@1, $2, $4, $6);
+      }
+  | IF expr THEN expr %prec LOWER_THAN_ELSE
+      {
+        // Naked if without else: transform to if condition then body else ()
+        $$ = new IfThenElse(@1, $2, $4, new Sequence(nl, std::vector<Expr*>{}));
+      }
 ;
 
 varDecl: VAR ID typeannotation ASSIGN expr
