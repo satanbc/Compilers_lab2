@@ -148,7 +148,6 @@ ifExpr:
       }
   | IF expr THEN expr %prec LOWER_THAN_ELSE
       {
-        // Naked if without else: transform to if condition then body else ()
         $$ = new IfThenElse(@1, $2, $4, new Sequence(nl, std::vector<Expr*>{}));
       }
 ;
